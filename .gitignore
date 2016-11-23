@@ -1,4 +1,5 @@
 /test/bin/
 /test/temp/
+/test/*.log
 *.depend
 *.layout

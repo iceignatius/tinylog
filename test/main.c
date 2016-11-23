@@ -4,7 +4,7 @@
 
 int main(void)
 {
-    static const char modname[] = "tinylog_test";
+    static const char modname[] = "tinylog-test";
 
     tlog_set_loglevel(TLOG_LEV_WARN);
     tlog_set_logfile("./testlog.log");

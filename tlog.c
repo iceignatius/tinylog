@@ -147,6 +147,49 @@ bool record_encode_str(record_t *record, char *buf, size_t bufsize)
     return res;
 }
 //------------------------------------------------------------------------------
+static
+bool print_str_to_file(FILE *file, const char *str)
+{
+    return 1 == fwrite(str, strlen(str), 1, file);
+}
+//------------------------------------------------------------------------------
+static
+bool print_str_to_targets(const log_param_t *param, const char *str)
+{
+    FILE *logfile = false;
+
+    bool res = false;
+    do
+    {
+        if( param->targets & TLOG_OUTPUT_STDOUT )
+        {
+            if( !print_str_to_file(stdout, str) )
+                break;
+        }
+
+        if( param->targets & TLOG_OUTPUT_STDERR )
+        {
+            if( !print_str_to_file(stderr, str) )
+                break;
+        }
+
+        if( param->targets & TLOG_OUTPUT_LOGFILE )
+        {
+            if( !( logfile = fopen(param->logfile, "ab") ) )
+                break;
+            if( !print_str_to_file(logfile, str) )
+                break;
+        }
+
+        res = true;
+    } while(false);
+
+    if( logfile )
+        fclose(logfile);
+
+    return res;
+}
+//------------------------------------------------------------------------------
 int tlog_print_detail(const char *module, const char *func, unsigned level, const char *format, ...)
 {
     /*
@@ -172,6 +215,8 @@ int tlog_print_detail(const char *module, const char *func, unsigned level, cons
 
         char recstr[2*sizeof(record.msg)] = {0};
         if( !record_encode_str(&record, recstr, sizeof(recstr)-1) ) JMPBK_THROW(0);
+
+        if( !print_str_to_targets(&logparam, recstr) ) JMPBK_THROW(0);
     }
     JMPBK_FINAL
     {
