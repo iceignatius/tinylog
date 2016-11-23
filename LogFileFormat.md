@@ -33,9 +33,9 @@ Tiny Logger's Log File Format
 ## Record Format ##
 
 單一的訊息記錄由多個訊息項目 (record item) 前後排列組成，
-訊息項目之間由一個 ASCII TAB (0x09) 符號做為分隔，示意如下：
+訊息項目之間由一個 ASCII HT (0x09) 符號做為分隔，示意如下：
 
-    Item1<TAB>Item2<TAB>Item3<TAB>...<TAB>ItemN<LF>
+    Item1<HT>Item2<HT>Item3<HT>...<HT>ItemN<LF>
 
 一個訊息記錄應含有一個以上、種類不同的訊息項目(以項目標籤為區分依據)。
 
