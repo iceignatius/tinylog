@@ -2,6 +2,14 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+    #include <io.h>
+#else
+    #include <sys/file.h>
+#endif
+
 #include <gen/ascii.h>
 #include <gen/jmpbk.h>
 #include <gen/bufstm.h>
@@ -147,10 +155,62 @@ bool record_encode_str(record_t *record, char *buf, size_t bufsize)
     return res;
 }
 //------------------------------------------------------------------------------
+#ifdef _WIN32
+static
+bool lock_file(FILE *file, OVERLAPPED *overlapped)
+{
+    return LockFileEx((HANDLE) _get_osfhandle(_fileno(file)),
+                      LOCKFILE_EXCLUSIVE_LOCK,
+                      0,
+                      -1,
+                      -1,
+                      overlapped);
+}
+#else
+static
+bool lock_file(FILE *file)
+{
+    return !flock(fileno(file), LOCK_EX);
+}
+#endif
+//------------------------------------------------------------------------------
+#ifdef _WIN32
+static
+bool unlock_file(FILE *file, OVERLAPPED *overlapped)
+{
+    return UnlockFileEx((HANDLE) _get_osfhandle(_fileno(file)),
+                        0,
+                        -1,
+                        -1,
+                        overlapped);
+}
+#else
+static
+bool unlock_file(FILE *file)
+{
+    return !flock(fileno(file), LOCK_UN);
+}
+#endif
+//------------------------------------------------------------------------------
 static
 bool print_str_to_file(FILE *file, const char *str)
 {
-    return 1 == fwrite(str, strlen(str), 1, file);
+#ifdef _WIN32
+    OVERLAPPED overlapped = {0};
+    lock_file(file, &overlapped);
+#else
+    lock_file(file);
+#endif
+
+    bool res = ( 1 == fwrite(str, strlen(str), 1, file) );
+
+#ifdef _WIN32
+    unlock_file(file, &overlapped);
+#else
+    unlock_file(file);
+#endif
+
+    return res;
 }
 //------------------------------------------------------------------------------
 static
