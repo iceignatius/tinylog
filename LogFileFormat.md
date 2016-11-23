@@ -69,5 +69,5 @@ Tiny Logger's Log File Format
 | func | 產生此訊息記錄的函式名稱 |
 | proc | 產生此訊息記錄的行程 ID，格式為 hexadecimal number。 |
 | thrd | 產生此訊息記錄的執行緒 ID，格式為 hexadecimal number。 |
-| lev  | 此訊息的級別，為一 ASCII 大寫字串，可為下列項目之其一(一層級高低排序)：FAIL/ERROR/WARN/NOTE/INFO/DEBUG |
+| lev  | 此訊息的級別，為一 ASCII 大寫字串，可為下列項目之其一(依層級高低排序)：FAIL/ERROR/WARN/NOTE/INFO/DEBUG |
 | msg  | 對與此訊息的主要文字描述，為 ASCII 或其衍生編碼的字串，不得含有 ASCII 控制碼。 |
