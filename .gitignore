@@ -1,6 +1,9 @@
 /temp/
 /test/bin/
 /test/temp/
+/test/appl.*
+/test/*.out
+/test/*.sign
 /test/*.log
 *.a
 *.depend
