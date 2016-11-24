@@ -1,5 +1,5 @@
 # ----------------------------------------------------------
-# ---- Tiny Logger Library ---------------------------------
+# ---- Tiny Logger Library - Test  -------------------------
 # ----------------------------------------------------------
 
 # Detect OS name
@@ -14,14 +14,19 @@ LD  := gcc
 AR  := ar rcs
 
 # Setting
-OUTDIR  := .
-OUTNAME := tlog
-OUTEXT  := .a
-OUTPUT  := $(OUTDIR)/lib$(OUTNAME)$(OUTEXT)
+OUTDIR  := bin
+OUTNAME := tlog_test
+ifeq ($(OS),Windows_NT)
+	OUTEXT := .exe
+else
+	OUTEXT :=
+endif
+OUTPUT  := $(OUTDIR)/$(OUTNAME)$(OUTEXT)
 TEMPDIR := temp
 INCDIR  :=
-INCDIR  += -Isubmod/genutil
+INCDIR  += -I..
 LIBDIR  :=
+LIBDIR  += -L..
 CFLAGS  :=
 CFLAGS  += -Wall
 CFLAGS  += -O2
@@ -31,10 +36,9 @@ endif
 LDFLAGS :=
 LDFLAGS += -s
 SRCS    :=
-SRCS    += submod/genutil/gen/systime.c
-SRCS    += submod/genutil/gen/timeinf.c
-SRCS    += tlog.c
+SRCS    += main.c
 LIBS    :=
+LIBS    += -ltlog
 OBJS    := $(notdir $(SRCS))
 OBJS    := $(addprefix $(TEMPDIR)/,$(OBJS))
 OBJS    := $(OBJS:%.c=%.o)
@@ -53,12 +57,14 @@ ifeq ($(OS),Windows_NT)
 	-del /Q $(subst /,\,$(OBJS))
 	-del /Q $(subst /,\,$(DEPS))
 	-del /Q $(subst /,\,$(OUTPUT))
+	-del /Q *.log
 	-rmdir /Q $(subst /,\,$(TEMPDIR))
+	-rmdir /Q $(subst /,\,$(OUTDIR))
 else
 	-@rm -f $(OBJS) $(DEPS) $(OUTPUT)
-	-@rmdir $(TEMPDIR)
+	-@rm -f *.log
+	-@rmdir $(TEMPDIR) $(OUTDIR)
 endif
-	cd test && $(MAKE) $(MAKECMDGOALS)
 
 # Build process
 
@@ -75,7 +81,7 @@ build_step: $(OUTPUT)
 post_step:
 
 $(OUTPUT): $(OBJS)
-	$(AR) $@ $^
+	$(LD) -o $@ $(LIBDIR) $(LDFLAGS) $^ $(LIBS)
 
 define Compile-C-Unit
 $(CC) -MM $(INCDIR) $(CFLAGS) -o $(TEMPDIR)/$*.d $< -MT $@
@@ -87,10 +93,6 @@ $(CXX) -c  $(INCDIR) $(CFLAGS) -o $@ $<
 endef
 
 -include $(DEPS)
-$(TEMPDIR)/%.o: submod/genutil/gen/%.c
-	$(Compile-C-Unit)
-$(TEMPDIR)/%.o: submod/genutil/gen/%.cpp
-	$(Compile-Cpp-Unit)
 $(TEMPDIR)/%.o: %.c
 	$(Compile-C-Unit)
 $(TEMPDIR)/%.o: %.cpp
@@ -101,4 +103,4 @@ $(TEMPDIR)/%.o: %.cpp
 install:
 
 test: all
-	cd test && $(MAKE) $(MAKECMDGOALS)
+	$(OUTPUT)
