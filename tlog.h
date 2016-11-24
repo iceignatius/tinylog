@@ -78,11 +78,7 @@ int tlog_print_detail(const char *module, const char *func, unsigned level, cons
 /**
  * @fn int tlog_print_fail(module, format, args...)
  * @brief Print log message for fatal.
- *
- * @param module Name of the module who generate the message.
- * @param format String of the message which follows the "printf" format.
- * @param args   Arguments that just like in "printf".
- * @return ZERO if success; and others if failed.
+ * @details This function is similarly to ::tlog_print, but with fatal level.
  */
 #define tlog_print_fail(module, format, args...) \
         tlog_print_detail(module, __func__, TLOG_LEV_FAIL, format, ##args)
@@ -90,11 +86,7 @@ int tlog_print_detail(const char *module, const char *func, unsigned level, cons
 /**
  * @fn int tlog_print_error(module, format, args...)
  * @brief Print log message for error.
- *
- * @param module Name of the module who generate the message.
- * @param format String of the message which follows the "printf" format.
- * @param args   Arguments that just like in "printf".
- * @return ZERO if success; and others if failed.
+ * @details This function is similarly to ::tlog_print, but with error level.
  */
 #define tlog_print_error(module, format, args...) \
         tlog_print_detail(module, __func__, TLOG_LEV_ERROR, format, ##args)
@@ -102,11 +94,7 @@ int tlog_print_detail(const char *module, const char *func, unsigned level, cons
 /**
  * @fn int tlog_print_warn(module, format, args...)
  * @brief Print log message for warning.
- *
- * @param module Name of the module who generate the message.
- * @param format String of the message which follows the "printf" format.
- * @param args   Arguments that just like in "printf".
- * @return ZERO if success; and others if failed.
+ * @details This function is similarly to ::tlog_print, but with warning level.
  */
 #define tlog_print_warn(module, format, args...) \
         tlog_print_detail(module, __func__, TLOG_LEV_WARN, format, ##args)
@@ -114,11 +102,7 @@ int tlog_print_detail(const char *module, const char *func, unsigned level, cons
 /**
  * @fn int tlog_print_note(module, format, args...)
  * @brief Print log message for notification.
- *
- * @param module Name of the module who generate the message.
- * @param format String of the message which follows the "printf" format.
- * @param args   Arguments that just like in "printf".
- * @return ZERO if success; and others if failed.
+ * @details This function is similarly to ::tlog_print, but with notification level.
  */
 #define tlog_print_note(module, format, args...) \
         tlog_print_detail(module, __func__, TLOG_LEV_NOTE, format, ##args)
@@ -126,11 +110,7 @@ int tlog_print_detail(const char *module, const char *func, unsigned level, cons
 /**
  * @fn int tlog_print_info(module, format, args...)
  * @brief Print log message for information.
- *
- * @param module Name of the module who generate the message.
- * @param format String of the message which follows the "printf" format.
- * @param args   Arguments that just like in "printf".
- * @return ZERO if success; and others if failed.
+ * @details This function is similarly to ::tlog_print, but with information level.
  */
 #define tlog_print_info(module, format, args...) \
         tlog_print_detail(module, __func__, TLOG_LEV_INFO, format, ##args)
@@ -138,11 +118,7 @@ int tlog_print_detail(const char *module, const char *func, unsigned level, cons
 /**
  * @fn int tlog_print_debug(module, format, args...)
  * @brief Print log message for debug.
- *
- * @param module Name of the module who generate the message.
- * @param format String of the message which follows the "printf" format.
- * @param args   Arguments that just like in "printf".
- * @return ZERO if success; and others if failed.
+ * @details This function is similarly to ::tlog_print, but with debug level.
  */
 #define tlog_print_debug(module, format, args...) \
         tlog_print_detail(module, __func__, TLOG_LEV_DEBUG, format, ##args)
