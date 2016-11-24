@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="tinylog_test" />
+		<Option title="tlog_test" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/tinylog_test" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/tlog_test" prefix_auto="1" extension_auto="1" />
 				<Option object_output="temp/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
