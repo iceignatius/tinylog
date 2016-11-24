@@ -1,3 +1,6 @@
 [submodule "submod/genutil"]
 	path = submod/genutil
 	url = https://github.com/iceignatius/genutil.git
+[submodule "submod/ts890sdkfix"]
+	path = submod/ts890sdkfix
+	url = git@192.168.0.5:ignatius/ts890sdkfix
