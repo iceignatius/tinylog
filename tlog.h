@@ -13,6 +13,11 @@ extern "C" {
 #endif
 
 /**
+ * @brief The maximum size of message buffer.
+ */
+#define TLOG_MSG_MAXSIZE 1024
+
+/**
  * Log levels.
  */
 enum tlog_lev_t
