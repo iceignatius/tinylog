@@ -23,7 +23,7 @@ typedef struct record_t
     const char *modname;
     const char *funcname;
     unsigned    level;
-    char        msg[1024];
+    char        msg[TLOG_MSG_MAXSIZE];
 } record_t;
 
 typedef struct log_param_t
@@ -261,6 +261,9 @@ int tlog_print_detail(const char *module, const char *func, unsigned level, cons
      * @param format String of the message which follows the "printf" format.
      * @param ...    Arguments that just like in "printf".
      * @return ZERO if success; and others if failed.
+     *
+     * @remarks The message should be shorter than ::TLOG_MSG_MAXSIZE,
+     *          or it will be truncated.
      */
     if( level > logparam.level ) return 0;
 
