@@ -35,8 +35,8 @@ typedef struct log_param_t
 
 static log_param_t logparam =
 {
-    .level   = TLOG_LEV_INFO,
-    .targets = TLOG_OUTPUT_STDOUT | TLOG_OUTPUT_LOGFILE,
+    .level   = TLOG_LEV_WARN,
+    .targets = TLOG_OUTPUT_STDERR | TLOG_OUTPUT_LOGFILE,
     .logfile = "/var/log/tlog.log",
 };
 
@@ -48,7 +48,7 @@ void tlog_set_loglevel(unsigned level)
      *
      * @param level It can be any level that defined in ::tlog_lev_t,
      *              and any records which level are great then the value will be discard.
-     *              The default value is ::TLOG_LEV_INFO.
+     *              The default value is ::TLOG_LEV_WARN.
      */
     logparam.level = level;
 }
@@ -60,7 +60,7 @@ void tlog_set_output(int targets)
      *
      * @param targets The combination of ::tlog_output_t,
      *                and that indicated where the log message should be output to.
-     *                The default combination is TLOG_OUTPUT_STDOUT | TLOG_OUTPUT_LOGFILE.
+     *                The default combination is TLOG_OUTPUT_STDERR | TLOG_OUTPUT_LOGFILE.
      */
     logparam.targets = targets;
 }
