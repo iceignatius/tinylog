@@ -155,6 +155,13 @@ bool record_encode_str(record_t *record, char *buf, size_t bufsize)
     return res;
 }
 //------------------------------------------------------------------------------
+static
+void generate_logfile_name(char *buf, size_t size, const char *prefix)
+{
+    timeinf_t timeinf = timeinf_from_uxtime(systime_get_local());
+    snprintf(buf, size, "%s%04u-%02u-%02u", prefix, timeinf.year, timeinf.month, timeinf.day);
+}
+//------------------------------------------------------------------------------
 #ifdef _WIN32
 static
 bool lock_file(FILE *file, OVERLAPPED *overlapped)
@@ -235,7 +242,10 @@ bool print_str_to_targets(const log_param_t *param, const char *str)
 
         if( param->targets & TLOG_OUTPUT_LOGFILE )
         {
-            if( !( file = fopen(param->fileprefix, "ab") ) )
+            char filename[sizeof(param->fileprefix)];
+            generate_logfile_name(filename, sizeof(filename), param->fileprefix);
+
+            if( !( file = fopen(filename, "ab") ) )
                 break;
             if( !print_str_to_file(file, str) )
                 break;
