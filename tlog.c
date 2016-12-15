@@ -225,19 +225,18 @@ bool print_str_to_targets(const log_param_t *param, const char *str)
 {
     FILE *file = false;
 
-    bool res = false;
-    do
+    bool haveerr = false;
     {
         if( param->targets & TLOG_OUTPUT_STDOUT )
         {
             if( !print_str_to_file(stdout, str) )
-                break;
+                haveerr = true;
         }
 
         if( param->targets & TLOG_OUTPUT_STDERR )
         {
             if( !print_str_to_file(stderr, str) )
-                break;
+                haveerr = true;
         }
 
         if( param->targets & TLOG_OUTPUT_LOGFILE )
@@ -246,18 +245,16 @@ bool print_str_to_targets(const log_param_t *param, const char *str)
             generate_logfile_name(filename, sizeof(filename), param->fileprefix);
 
             if( !( file = fopen(filename, "ab") ) )
-                break;
-            if( !print_str_to_file(file, str) )
-                break;
+                haveerr = true;
+            if( file && !print_str_to_file(file, str) )
+                haveerr = true;
         }
-
-        res = true;
-    } while(false);
+    }
 
     if( file )
         fclose(file);
 
-    return res;
+    return !haveerr;
 }
 //------------------------------------------------------------------------------
 int tlog_print_detail(const char *module, const char *func, unsigned level, const char *format, ...)
