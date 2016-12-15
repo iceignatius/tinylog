@@ -47,7 +47,7 @@ enum tlog_output_t
 
 void tlog_set_loglevel(unsigned level);
 void tlog_set_output(int targets);
-void tlog_set_logfile(const char *filename);
+void tlog_set_logfile_prefix(const char *fileprefix);
 
 /**
  * @}

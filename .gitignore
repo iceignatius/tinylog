@@ -1,7 +1,7 @@
 /temp/
 /test/bin/
 /test/temp/
-/test/*.log
+/test/tlog-*
 *.a
 *.depend
 *.layout

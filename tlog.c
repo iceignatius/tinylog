@@ -30,14 +30,14 @@ typedef struct log_param_t
 {
     unsigned level;
     int      targets;
-    char     logfile[1024];
+    char     fileprefix[1024];
 } log_param_t;
 
 static log_param_t logparam =
 {
-    .level   = TLOG_LEV_WARN,
-    .targets = TLOG_OUTPUT_STDERR | TLOG_OUTPUT_LOGFILE,
-    .logfile = "/var/log/tlog.log",
+    .level      = TLOG_LEV_WARN,
+    .targets    = TLOG_OUTPUT_STDERR | TLOG_OUTPUT_LOGFILE,
+    .fileprefix = "/var/log/tlog-",
 };
 
 //------------------------------------------------------------------------------
@@ -65,15 +65,15 @@ void tlog_set_output(int targets)
     logparam.targets = targets;
 }
 //------------------------------------------------------------------------------
-void tlog_set_logfile(const char *filename)
+void tlog_set_logfile_prefix(const char *fileprefix)
 {
     /**
-     * Change the log file path and name.
+     * Change the prefix of log file path and name.
      *
-     * @param filename The path and name of the log file.
-     *                 The default is "/var/log/tlog.log".
+     * @param fileprefix The path and name of the log file.
+     *                   The default is "/var/log/tlog-".
      */
-    strncpy(logparam.logfile, filename, sizeof(logparam.logfile)-1);
+    strncpy(logparam.fileprefix, fileprefix, sizeof(logparam.fileprefix)-1);
 }
 //------------------------------------------------------------------------------
 static
@@ -216,7 +216,7 @@ bool print_str_to_file(FILE *file, const char *str)
 static
 bool print_str_to_targets(const log_param_t *param, const char *str)
 {
-    FILE *logfile = false;
+    FILE *file = false;
 
     bool res = false;
     do
@@ -235,17 +235,17 @@ bool print_str_to_targets(const log_param_t *param, const char *str)
 
         if( param->targets & TLOG_OUTPUT_LOGFILE )
         {
-            if( !( logfile = fopen(param->logfile, "ab") ) )
+            if( !( file = fopen(param->fileprefix, "ab") ) )
                 break;
-            if( !print_str_to_file(logfile, str) )
+            if( !print_str_to_file(file, str) )
                 break;
         }
 
         res = true;
     } while(false);
 
-    if( logfile )
-        fclose(logfile);
+    if( file )
+        fclose(file);
 
     return res;
 }
