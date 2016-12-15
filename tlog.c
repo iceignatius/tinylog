@@ -30,14 +30,14 @@ typedef struct log_param_t
 {
     unsigned level;
     int      targets;
-    char     logfile[1024];
+    char     fileprefix[1024];
 } log_param_t;
 
 static log_param_t logparam =
 {
-    .level   = TLOG_LEV_WARN,
-    .targets = TLOG_OUTPUT_STDERR | TLOG_OUTPUT_LOGFILE,
-    .logfile = "/var/log/tlog.log",
+    .level      = TLOG_LEV_WARN,
+    .targets    = TLOG_OUTPUT_STDERR | TLOG_OUTPUT_LOGFILE,
+    .fileprefix = "/var/log/tlog-",
 };
 
 //------------------------------------------------------------------------------
@@ -65,15 +65,15 @@ void tlog_set_output(int targets)
     logparam.targets = targets;
 }
 //------------------------------------------------------------------------------
-void tlog_set_logfile(const char *filename)
+void tlog_set_logfile_prefix(const char *fileprefix)
 {
     /**
-     * Change the log file path and name.
+     * Change the prefix of log file path and name.
      *
-     * @param filename The path and name of the log file.
-     *                 The default is "/var/log/tlog.log".
+     * @param fileprefix The path and name of the log file.
+     *                   The default is "/var/log/tlog-".
      */
-    strncpy(logparam.logfile, filename, sizeof(logparam.logfile)-1);
+    strncpy(logparam.fileprefix, fileprefix, sizeof(logparam.fileprefix)-1);
 }
 //------------------------------------------------------------------------------
 static
@@ -155,6 +155,13 @@ bool record_encode_str(record_t *record, char *buf, size_t bufsize)
     return res;
 }
 //------------------------------------------------------------------------------
+static
+void generate_logfile_name(char *buf, size_t size, const char *prefix)
+{
+    timeinf_t timeinf = timeinf_from_uxtime(systime_get_local());
+    snprintf(buf, size, "%s%04u-%02u-%02u", prefix, timeinf.year, timeinf.month, timeinf.day);
+}
+//------------------------------------------------------------------------------
 #ifdef _WIN32
 static
 bool lock_file(FILE *file, OVERLAPPED *overlapped)
@@ -216,38 +223,38 @@ bool print_str_to_file(FILE *file, const char *str)
 static
 bool print_str_to_targets(const log_param_t *param, const char *str)
 {
-    FILE *logfile = false;
+    FILE *file = false;
 
-    bool res = false;
-    do
+    bool haveerr = false;
     {
         if( param->targets & TLOG_OUTPUT_STDOUT )
         {
             if( !print_str_to_file(stdout, str) )
-                break;
+                haveerr = true;
         }
 
         if( param->targets & TLOG_OUTPUT_STDERR )
         {
             if( !print_str_to_file(stderr, str) )
-                break;
+                haveerr = true;
         }
 
         if( param->targets & TLOG_OUTPUT_LOGFILE )
         {
-            if( !( logfile = fopen(param->logfile, "ab") ) )
-                break;
-            if( !print_str_to_file(logfile, str) )
-                break;
+            char filename[sizeof(param->fileprefix)];
+            generate_logfile_name(filename, sizeof(filename), param->fileprefix);
+
+            if( !( file = fopen(filename, "ab") ) )
+                haveerr = true;
+            if( file && !print_str_to_file(file, str) )
+                haveerr = true;
         }
+    }
 
-        res = true;
-    } while(false);
+    if( file )
+        fclose(file);
 
-    if( logfile )
-        fclose(logfile);
-
-    return res;
+    return !haveerr;
 }
 //------------------------------------------------------------------------------
 int tlog_print_detail(const char *module, const char *func, unsigned level, const char *format, ...)

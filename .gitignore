@@ -5,6 +5,7 @@
 /test/*.out
 /test/*.sign
 /test/*.log
+/test/tlog-*
 *.a
 *.depend
 *.layout
