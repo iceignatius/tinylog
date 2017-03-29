@@ -37,7 +37,11 @@ static log_param_t logparam =
 {
     .level      = TLOG_LEV_WARN,
     .targets    = TLOG_OUTPUT_STDERR | TLOG_OUTPUT_LOGFILE,
+#ifdef UIC_TS890
+    .fileprefix = "./log/tlog-",
+#else
     .fileprefix = "/var/log/tlog-",
+#endif
 };
 
 //------------------------------------------------------------------------------
